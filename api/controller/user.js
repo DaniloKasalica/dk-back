@@ -7,10 +7,11 @@ const user = {
        
        try{
       const person = await userService.InsertIntoTable(req.body);
-      blockToken = jwt.sign({id:person.insertId},process.env.BLOCK_TOKEN, { expiresIn: '1d' });
+     /* blockToken = jwt.sign({id:person.insertId},process.env.BLOCK_TOKEN, { expiresIn: '1d' });
       req.body.url = `http://localhost:3001/user/security/${blockToken}`
-      req.params.id = person.insertId
-      res.send({ID: person.insertId})
+      
+      */
+     req.params.id = person.insertId
       next();
        }catch(err){
          res.status(400).send({error: err.message});

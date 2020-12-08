@@ -2,6 +2,7 @@ const userService = require('../service/user')
 const bcrypt = require('bcryptjs');
 const user = {
      newuser : async (req,res,next) =>{
+         console.log(req.body)
         Promise.all([
             passval(req.body.password,false),
             usernameval(req.body.username),

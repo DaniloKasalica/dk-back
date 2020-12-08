@@ -68,27 +68,23 @@ const seller = {
            town = await  townService.FindByCord(req.body.latitude)
            result1 = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town.town)
 
-          res.send({"proizvodjaci": result1})
           }else{
            town = undefined 
-            result1 = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town)
+          result1 = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town)
 
-
-           result =   await Promise.all(
-                   result1.map(async (elem)=>{
-                      return {
-                       ...elem,
-                     sellerimages: await sellerimagesservice.findBySellerID(elem.id),
-                     productimages:await productimagesservice.findByProductID(elem.productid)
-                     }
-            
+          }
+          
+          result =   await Promise.all(
+            result1.map(async (elem)=>{
+               return {
+                ...elem,
+              sellerimages: await sellerimagesservice.findBySellerID(elem.id),
+              productimages:await productimagesservice.findByProductID(elem.productid)
+              }
             })
           )
-            console.log(result)
-          
-            res.send({"proizvodjaci": result})
-          }}catch(err){
-          console.log(err)
+          res.send({"proizvodjaci": result})
+          }catch(err){
           res.status(400).send({error:err.message})
         }
       },

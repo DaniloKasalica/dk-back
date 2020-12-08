@@ -4,6 +4,7 @@ const Module = require('../model/model')
 const user = {
   InsertIntoTable: async (doc) =>{
 try{
+  console.log(doc)
   const sql= `INSERT INTO Users (Username,Email,Number, Password)
    VALUES ?`
    const person = [[doc.username,doc.email,doc.number,doc.password]];
