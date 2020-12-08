@@ -43,10 +43,10 @@ FindBySellerID: async(id)=>{
      Sort as sort,
      Price as price,
      Quantity as quantity,
-     Unit as unit,
-     Image as image
+     Unit as unit
      FROM Products 
-     WHERE SelerID = ${id} `;
+     WHERE Products.SellerID = ${id} `;
+     console.log(sql)
     const result = await Module.query(sql);
 
     return Promise.resolve(result)

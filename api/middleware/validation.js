@@ -1,5 +1,5 @@
 const userService = require('../service/user')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const user = {
      newuser : async (req,res,next) =>{
         Promise.all([

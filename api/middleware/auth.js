@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sellerService = require('../service/seller');
 const userService = require('../service/user')
@@ -22,6 +22,7 @@ encpassword : async function (req,res,next){
 },
 login : async(req,res,next)=>{
   try{
+    console.log(req)
     let checkuser 
      if(req.body.username)  {
        checkuser =await userService.FindByUsername(req.body.username)
@@ -47,13 +48,15 @@ login : async(req,res,next)=>{
       }
 },
 authenticateToken : async (req,res,next)=>{
+  console.log('accesToken trazi')
   const authHeader = req.headers['authorization']// Bearer TOKEN
   const token  =authHeader && authHeader.split(' ')[1]
+  console.log(token)
   if(token == null) return res.sendStatus(401)
 
   jwt.verify(token,process.env.ACCESS_TOKEN_USER, (err,response)=>{
     if(err)
-    res.sendStatus(401)/3
+    res.sendStatus(403)
     req.params.id = response.id;
     next()
   })

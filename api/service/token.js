@@ -17,6 +17,7 @@ try{
 FindToken: async (token) =>{
 try{
  const sql= `SELECT * FROM Token WHERE TOKEN = '${token}'`
+ console.log(sql)
  const result =  await Module.query(sql)
  if (result.length === 0)
  throw new Error ('Invalid refresh token')

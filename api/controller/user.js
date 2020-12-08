@@ -18,8 +18,8 @@ const user = {
     },
     login: async(req,res)=>{
       try{
-      const accesToken = jwt.sign({id:req.body.id},process.env.ACCESS_TOKEN_USER, { expiresIn: '10m' });
-      const refreshToken =  jwt.sign({id:req.body.id},process.env.REFRESH_TOKEN_USER)
+      const accesToken = await jwt.sign({id:req.body.id},process.env.ACCESS_TOKEN_USER, { expiresIn: '2m' });
+      const refreshToken =  await jwt.sign({id:req.body.id},process.env.REFRESH_TOKEN_USER)
       const result = await tokenService.InsertIntoTable(refreshToken)
       res.send({
         accesToken:accesToken,
@@ -42,15 +42,17 @@ const user = {
     },
     refreshToken: async(req,res)=>{
       try{
+        console.log('refresh trazi')
+        console.log(req.body)
       const refresToken = req.body.token
       if(refresToken==null) 
       return res.sendStatus(401)
       const result = await tokenService.FindToken(refresToken)
       jwt.verify(refresToken, process.env.REFRESH_TOKEN_USER, (err, user) => {
         if (err) 
-        return res.sendStatus(403)
-       const accessToken = jwt.sign({id: user.id}, process.env.ACCESS_TOKEN_USER, { expiresIn: '20m' })
-        res.json({ accessToken: accessToken })
+        return res.sendStatus(401)
+       const accessToken = jwt.sign({id: user.id}, process.env.ACCESS_TOKEN_USER, { expiresIn: '2m' })
+        res.status(200).send({ accessToken: accessToken })
       })
     }catch(err){
       res.status(400).send({error:err.message})

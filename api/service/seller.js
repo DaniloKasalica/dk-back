@@ -16,9 +16,14 @@ const seller = {
       return Promise.reject(err)
     }
   },
-  FindByInsertId: async (insertId) => {
+  FindBySellerID: async (id) => {
     try {
-      const sql = `SELECT * FROM Seller WHERE ${insertId} = SellerID`
+      const sql = `SELECT Name as name,
+      Number as number,
+      Email as email,
+      Description as description
+       FROM Seller
+       WHERE ${id} = Seller.SellerID`
       const result = await Module.query(sql)
       return Promise.resolve(result[0])
     } catch (err) {
@@ -38,12 +43,13 @@ const seller = {
   FindBySelingProduct: async (type, sort, location, town) => {
     try {
       let sql = `SELECT 
-        Seller.SellerID as id, Name as name,
+        Seller.SellerID as id,
+         Name as name,
+         Products.ProductID as productid,
         Number as number,Email as email,
         Description as description,
-        Seller.Image as image,Unit as unit,
-         Price as price, Quantity as quantity,
-         Products.Image as ProductImage,     
+         Unit as unit,
+         Price as price, Quantity as quantity,    
          Shippingdetail.Town as town,   
          Shippingdetail.Time as shippingtime,
          Sorts.Type as type
@@ -77,7 +83,7 @@ const seller = {
         sql += `AND town = '${town}' `
       }
       sql += 'GROUP BY id'
-      console.log(sql)
+      console.log(sql,'<----------sellerquery')
       const result = await Module.query(sql);
 
       return Promise.resolve(result)

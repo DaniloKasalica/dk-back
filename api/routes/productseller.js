@@ -11,7 +11,6 @@ const productController = require('../controller/productseller')
 
 router.post('/newprod',auth.authenticateToken,productController.AddNewProd) //dodati validaciju i slike!
 router.put('/updateprod/:productid',auth.authenticateToken,productController.UpdateProduct)
-router.get('/:id',productController.FindSellerProducts)
 router.delete('/:productid',auth.authenticateToken,productController.RemoveProduct)
 //router.post('/newmarketingprod/:PacketID',/*auth.authadmin.authenticateToken,*/productController.AddNewProdMarketing)
 

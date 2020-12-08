@@ -13,7 +13,7 @@ const cors = require('cors')
 const userRoutes = require('./api/routes/user')
 const sellerRoutes = require('./api/routes/seller')
 const productsellerRoutes  = require('./api/routes/productseller')
-
+const productuserRoutes = require('./api/routes/productuser')
 
 
 const app = express()
@@ -24,9 +24,9 @@ app.use(cors())
 app.use('/api/user',userRoutes);
 app.use('/api/seller/products',productsellerRoutes)
 app.use('/api/seller', sellerRoutes);
-
+app.use('/api/products/seller',productuserRoutes)
 app.get('*',(req,res)=>{
-    return handle(req,res)
+    console.log('hehehehe',req,'sdass')
 })
 
 

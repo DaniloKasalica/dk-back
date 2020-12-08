@@ -2,6 +2,8 @@
 const sellerService = require('../service/seller')
 const tokenService = require('../service/token')
 const townService = require('../service/town')
+const sellerimagesservice = require('../service/sellerimages')
+const productimagesservice = require('../service/productimages')
 const jwt = require('jsonwebtoken')
 const seller = {
     AddUser: async(req,res,next)=>{
@@ -57,29 +59,35 @@ const seller = {
       res.status(400).send({error:err.message})
     }
     },
-
-
-    FindBestSeller: async(req,res)=>{
+     FindBestSeller: async(req,res)=>{
         try{
-          console.log(req.body)
           let town ={}
+          let result1 ={}
           let result ={}
           if(req.body.latitude && req.body.location==undefined){
            town = await  townService.FindByCord(req.body.latitude)
-           console.log(town)
-           result = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town.town)
+           result1 = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town.town)
 
-          res.send({"proizvodjaci": result})
+          res.send({"proizvodjaci": result1})
           }else{
            town = undefined 
-             result = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town)
-             console.log(result)
-            res.send({"proizvodjaci": result})
-          }
-       
-         
+            result1 = await sellerService.FindBySelingProduct(req.body.type,req.body.sort,req.body.location,town)
+
+
+           result =   await Promise.all(
+                   result1.map(async (elem)=>{
+                      return {
+                       ...elem,
+                     sellerimages: await sellerimagesservice.findBySellerID(elem.id),
+                     productimages:await productimagesservice.findByProductID(elem.productid)
+                     }
+            
+            })
+          )
+            console.log(result)
           
-        }catch(err){
+            res.send({"proizvodjaci": result})
+          }}catch(err){
           console.log(err)
           res.status(400).send({error:err.message})
         }

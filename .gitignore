@@ -4,3 +4,4 @@
 /node_modules
 /.env
 .pnp.js
+/.package-lock.json

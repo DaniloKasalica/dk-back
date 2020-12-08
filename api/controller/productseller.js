@@ -18,14 +18,6 @@ const product = {
           res.status(400).send({error:err.message})
        }
     },
-    FindSellerProducts: async(req,res)=>{
-      try{
-         const products = await productService.FindBySellerID(req.params.id)
-         res.status(200).send({products})
-      }catch(err){
-         res.status(400).send({error:err.message})
-      }
-   },
    RemoveProduct: async(req,res)=>{
       try{
          const products = await productService.ChangeStatus(req.body.status,req.params.productid,req.params.id)

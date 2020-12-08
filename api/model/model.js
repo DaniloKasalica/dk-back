@@ -1,24 +1,29 @@
 const sql = require("./db.js")
 
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 
 const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
     SellerID int(11) NOT NULL auto_increment,
-    Name varchar(50) NOT NULL,
+    Name varchar(50) NOT NULL UNIQUE,
     Number varchar(50) NOT NULL,
     Email varchar(255) NOT NULL,
     IsActive BOOLEAN  DEFAULT FALSE,
     Paid BOOLEAN DEFAULT FALSE,
     Packet int(1) DEFAULT 1 NOT NULL,
     Password varchar(150),
-    Image varchar(150),
     Description varchar(1000),
-
-    PRIMARY KEY (SellerID),
-    UNIQUE INDEX (Name)
+    PRIMARY KEY (SellerID)
     )`
 
+const createtablesellerimages = `CREATE TABLE IF NOT EXISTS Sellerimages (
+  ImageID int(11) NOT NULL auto_increment,
+  SellerID int(11) NOT NULL,
+  Url varchar(100) NOT NULL,
+  Main BOOLEAN  DEFAULT FALSE,
+  FOREIGN KEY (SellerID) REFERENCES Seller(SellerID),
+  PRIMARY KEY (ImageID)
+)`
 
     const createtablesort = `CREATE TABLE IF NOT EXISTS Sorts(
       Sort varchar(30),
@@ -42,7 +47,6 @@ const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
       Price float(10),
       IsDiscount BOOLEAN DEFAULT FALSE,
       Quantity int (11),
-      Image VARCHAR(100),
       Unit varchar(40),
       SellNum int(10) default 0,
       PRIMARY KEY (ProductID),
@@ -53,11 +57,17 @@ const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
 
 
 
+const createtableproductimages = `CREATE TABLE IF NOT EXISTS Productimages (
+  ImageID int(11) NOT NULL auto_increment,
+  ProductID int(11) NOT NULL,
+  Url varchar(100) NOT NULL,
+  Main BOOLEAN  DEFAULT FALSE,
+  FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+  PRIMARY KEY (ImageID)
+)`
 
 
-
-
-    const createtabletowns = `CREATE TABLE IF NOT EXISTS Towns(
+const createtabletowns = `CREATE TABLE IF NOT EXISTS Towns(
         Town varchar(20) NOT NULL,
         Latitude float(12) NOT NULL,
         Longitude float(12) NOT NULL,
@@ -201,6 +211,14 @@ const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
     console.log(err)
   })
 
+  sql.query(createtablesellerimages,(err,data)=>{
+    if(err)
+    console.log(err)
+  })
+  sql.query(createtableproductimages,(err,data)=>{
+    if(err)
+    console.log(err)
+  })
 
 
   const  Module = {}
@@ -221,36 +239,63 @@ const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
    
    }  
 
-/* 
+   /* 
    unos()
    .then((password)=>{
+   sql.query(`
+     INSERT INTO Users (Email,Username,Password,Number)
+     VALUES ('danilo.kasalica@gmail.com','Danilo12','${password[0]}','68846666');
  
-      sql.query(`
-     INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo1','068846666','danilo.kasalica@gmail.com',true,true,1,'${password[0]}','/seler[1].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
- 
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo2','068846666','danilo.kasalica2@gmail.com',true,true,1,'${password[0]}','/seler[2].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+     INSERT INTO Users (Email,Username,Password,Number)
+    VALUES ('danilo.kasalica@gmail.com2','Danilo2','${password[0]}','68846666');
 
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo3','068846666','danilo.kasalica3@gmail.com',true,true,1,'${password[0]}','/seler[3].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+     INSERT INTO Users (Email,Username,Password,Number)
+      VALUES ('danilo.kasalica@gmail.com3','Danilo3','${password[0]}','68846666');
 
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo4','068846666','danilo.kasalica4@gmail.com',true,true,1,'${password[0]}','/seler[4].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
-
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo5','068846666','danilo.kasalica5@gmail.com',true,true,1,'${password[0]}','/seler[5].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
-
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo6','068846666','danilo.kasalica6@gmail.com',true,true,1,'${password[0]}','/seler[6].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
-
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo7','068846666','danilo.kasalica7@gmail.com',true,true,1,'${password[0]}','/seler[7].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
-
-      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Image,Description)
-      VALUES ('Danilovo Gazdinvo8','068846666','danilo.kasalica8@gmail.com',true,true,1,'${password[0]}','/seler[8].jpg','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
 `
      )
+
+
+
+
+
+      sql.query(`
+     INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo1','068846666','danilo.kasalica@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+ 
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo2','068846666','danilo.kasalica2@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo3','068846666','danilo.kasalica3@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo4','068846666','danilo.kasalica4@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo5','068846666','danilo.kasalica5@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo6','068846666','danilo.kasalica6@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo7','068846666','danilo.kasalica7@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+
+      INSERT INTO Seller (Name,Number,Email,IsActive,Paid,Packet,Password,Description)
+      VALUES ('Danilovo Gazdinvo8','068846666','danilo.kasalica8@gmail.com',true,true,1,'${password[0]}','opis prvog prodavca sodska doksadok sakdosa kskoa dkosa dkok asdoksad okdsa o kodsakods oka sdkodsa o');
+`
+     )
+     sql.query(`
+     INSERT INTO Sellerimages (url,SellerID,Main) VALUES ('/seler[1].jpg',1,true);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[2].jpg',1);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[2].jpg',1);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[2].jpg',1);
+     INSERT INTO Sellerimages (url,SellerID,Main) VALUES ('/seler[2].jpg',2,true);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[1].jpg',2);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[2].jpg',2);
+     INSERT INTO Sellerimages (url,SellerID,Main) VALUES ('/seler[2].jpg',3,true);
+     INSERT INTO Sellerimages (url,SellerID) VALUES ('/seler[1].jpg',3);
+     `)
       sql.query(`
      INSERT INTO Type (Type) VALUES ('Voće');
      INSERT INTO Type (Type) VALUES ('Povrće');
@@ -285,19 +330,78 @@ const createtableseller = `CREATE TABLE IF NOT EXISTS Seller  (
    );
 
  sql.query(`
- INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Image,Unit) 
- VALUES (1,'prvi krastavac','Krastavac',2.20,100,'/seller[1].jpg','gr');
- INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Image,Unit) 
- VALUES (2,'prvi krastavac','Malina',2.20,100,'/seller[1].jpg','gr');
- INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Image,Unit) 
- VALUES (3,'prvi krastavac','Kupus',2.20,100,'/seller[1].jpg','gr');
- INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Image,Unit) 
- VALUES (4,'prvi krastavac','Mlijeko',2.20,100,'/seller[1].jpg','gr');
- INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Image,Unit) 
- VALUES (5,'prvi krastavac','Krastavac',2.20,100,'/seller[1].jpg','gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (1,'Plavi krastavac','Krastavac',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (1,'Planinski krastavac','Krastavac',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (1,'Kupus neki','Kupus',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (1,'Mlijekoneko','Mlijeko',2.20,100,'gr');
+
+ 
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (2,'prvi krastavac','Krastavac',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (2,'prva malina','Malina',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (2,'kupus','Kupus',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (2,'mlijekoslatko','Mlijeko',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (2,'drugi krastavac','Krastavac',2.20,100,'gr');
+
+
+ 
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit)
+ VALUES (3,'prvi krastavac','Krastavac',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit)
+ VALUES (3,'prvi malina','Malina',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit)
+ VALUES (3,'prvi kupus','Kupus',2.20,100,'gr');
+ INSERT INTO Products (SellerID,ProductName,Sort,Price,Quantity,Unit) 
+ VALUES (3,'drugi kupus','Kupus',2.20,100,'gr');
  `
 )
 
+     sql.query(`
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[1].jpg',1,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',1);
+     INSERT INTO Productimages (url,Productid) VALUES ('/seler[2].jpg',1);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',2,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',2);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',2);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',3,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',3);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',3);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',4,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',4);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',4);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',5,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',5);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',5);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',6,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',6);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',6);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',7,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',7);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',7);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',8,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',8);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',8);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',9,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',9);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',9);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',10,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',10);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',10);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',11,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',11);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',11);
+     INSERT INTO Productimages (url,ProductID,Main) VALUES ('/seler[2].jpg',12,true);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[2].jpg',12);
+     INSERT INTO Productimages (url,ProductID) VALUES ('/seler[1].jpg',12);
+     `)
 
 sql.query(`
 INSERT INTO Towns (Town,Latitude,Longitude) 
@@ -352,12 +456,38 @@ INSERT INTO Shippingdetail (Town,ProductID,Time)
 VALUES ('Nikšić',4,1);
 INSERT INTO Shippingdetail (Town,ProductID,Time) 
 VALUES ('Nikšić',5,8);
+
+
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Podgorica',5,3);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',6,4);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',6,1);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',7,8);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Podgorica',8,3);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',9,4);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',10,1);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',10,8);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Podgorica',11,3);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',11,4);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Nikšić',12,1);
+INSERT INTO Shippingdetail (Town,ProductID,Time) 
+VALUES ('Podgorica',12,8);
 `
 )
 
    })
  
-
 */
+
 
 module.exports = Module;

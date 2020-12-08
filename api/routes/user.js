@@ -16,6 +16,10 @@ router.post('/login',auth.login,userController.login)
 router.post('/token',userController.refreshToken)
 router.post('/logout', userController.logout)
 
+router.get('/comment',auth.authenticateToken,(req,res)=>{
+    console.log(req.params.id)
+     res.send({id:req.params.id})
+})
 router.put('/settings',auth.authenticateToken,validation.updateuser, auth.encpassword,userController.UpdateUser)
 
 router.post('/security/resetpassword',validation.password,auth.authenticateResetPasswordToken,auth.encpassword,userController.RessetPassword)
